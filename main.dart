@@ -1,19 +1,22 @@
 import 'dart:io';
 
 main() async {
-  var file = File('data.txt');
-  var contents;
+  File myfile = File("temp/go.txt");
 
-  if (await file.exists()) {
-    contents = await file.readAsString();
-    print(contents);
+  var text = await myfile.readAsString();
+  print(text);
+  var dir = Directory('temp');
 
-    var fileCopy = await File('data-copy.txt').writeAsString(contents);
-
-    print(await fileCopy.exists());
-
-    print(await fileCopy.length());
-  } else {
-    print("file doesn't exist");
+  try {
+    var dirList = dir.list();
+    await for (final FileSystemEntity f in dirList) {
+      if (f is File) {
+        print('found file ${f.path}');
+      } else if (f is Directory) {
+        print('found Directory ${f.path}');
+      }
+    }
+  } catch (e) {
+    print(e.toString());
   }
 }
