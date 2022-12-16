@@ -1,19 +1,45 @@
 import 'dart:io';
 
-main() async {
-  var file = File('data.txt');
-  var contents;
+createDirectory() async {
+  var videos = Directory("videos").create();
+  var music = Directory("music").create();
+  var documents = Directory("documents").create();
+  var image = Directory("images").create();
+}
 
-  if (await file.exists()) {
-    contents = await file.readAsString();
-    print(contents);
+moveFiles(var files, var dirList) async {
+  await for (final FileSystemEntity f in dirList) {
+    if (f is File) {
+      files = f.path;
 
-    var fileCopy = await File('data-copy.txt').writeAsString(contents);
+      String results = files.replaceAll(".\\", "");
 
-    print(await fileCopy.exists());
+      var myfile = File(results);
 
-    print(await fileCopy.length());
-  } else {
-    print("file doesn't exist");
+      String text = myfile.toString();
+      String firstStage = text.replaceAll("File: '", "");
+      String secondStage = firstStage.replaceAll("'", "");
+
+      if (secondStage != 'main.dart' && secondStage != 'README.md') {
+        print(secondStage);
+        myfile.rename('temp/$secondStage').then((_) => print("done"));
+      } else {
+        print("no files");
+      }
+    }
   }
+}
+
+readFiles() async {
+  var dir = Directory("");
+  var files;
+
+  var dirList = dir.list(recursive: false);
+
+  moveFiles(files, dirList);
+}
+
+main() async {
+  readFiles();
+  createDirectory();
 }
